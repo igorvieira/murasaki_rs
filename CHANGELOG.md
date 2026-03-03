@@ -8,44 +8,47 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Unified TUI Interface**: Single split-pane layout for both conflict resolution and staging
+- **Staging Mode**: Full git staging workflow when no conflicts are present
+  - `a` - Stage file (git add)
+  - `s` - Unstage file (git restore --staged)
+  - `r` - Restore file (discard changes)
+  - `c` - Open commit modal
+- **Commit Modal**: In-app commit with message input, error handling
+- **Diff View**: Shows file diff in right pane when in staging mode
+- **Auto-save**: Conflicts are automatically saved after resolution
+- **Context-aware Help**: Help modal shows relevant shortcuts based on current mode
+- **Version Checking**: Checks for updates on startup (with 3s timeout)
+- **AppMode Enum**: New state management for Conflict vs Staging modes
+- **Comprehensive Tests**: 69 total tests (up from 25)
+  - 25 new AppState tests for staging mode
+  - 12 new FileStatus tests
+  - 7 new GitOperation tests
 - GitHub Actions CI/CD workflows for automated testing
 - Test coverage reporting with codecov
 - Security audit workflow with cargo-audit
 - Multi-platform release workflow (Linux, macOS)
-- Comprehensive unit tests for domain layer (16 new tests)
 - Testing guide documentation (docs/TESTING.md)
 - CI status badges in README
 - One-line curl install script (clones to ~/.config/murasaki_rs and builds from source)
 - Homebrew formula for macOS and Linux installation
-- Script to update Homebrew formula (scripts/update-homebrew-formula.sh)
-- ANSI art banner for murasaki in purple, centered, borderless
-- Interactive status view when no conflicts are present
-- Split-pane layout: 25% left menu, 75% right dynamic content panel
-- Simplified menu: View Changes and Quit only
-- All file operations available in single View Changes view
-- Enhanced git status tracking with **staged vs unstaged** separation
-- Files organized into three sections: Staged, Staged+Unstaged, Unstaged
-- Two-character status display ([XY] format) showing index and workdir status
-- Color-coded sections: green (staged), yellow (both), red (unstaged)
-- Unified file operations in View Changes view:
-  - 'a' to stage files (git add)
-  - 's' to unstage files (git restore --staged)
-  - 'r' to restore files (git restore)
-- All operations accessible via bottom help bar
-- Title bar shows counts for each category
 
 ### Changed
+- **Removed MURASAKI banner**: Cleaner, minimal interface
+- **Unified interface**: Merged `status_view.rs` into `split_pane.rs`
+- **Key `s` behavior**: Changed from "save" to "unstage" in staging mode
+- **Key `c` behavior**: Context-aware (commit in staging mode, choose current in conflict mode)
 - Renamed binary from `murasaki_rs` to `saki` for easier command-line usage
 - Updated all documentation to English
 - Improved conflict color scheme:
   - Current (HEAD): Dark blue background
   - Incoming: Dark red background
   - Both selected: Dark purple background
-- Renamed project from "enkai" to "murasaki_rs"
-- Changed color struct from `EnkaiColors` to `MurasakiColors`
-- Increased test coverage from 5 to 21 tests
+- Increased test coverage from 25 to 69 tests
 
 ### Removed
+- **Removed `status_view.rs`**: Functionality merged into unified split-pane view
+- **Removed MURASAKI ASCII banner**: Simplified UI
 - Removed emojis from documentation and scripts for better accessibility
 - Removed Windows support from CI/CD workflows
 

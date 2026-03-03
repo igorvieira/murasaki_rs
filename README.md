@@ -1,5 +1,5 @@
 # murasaki_rs
-> A TUI tool for resolving git conflicts during merge or rebase operations.
+> A TUI tool for resolving git conflicts and managing staging during merge or rebase operations.
 
 
 [![CI](https://github.com/igorvieira/murasaki_rs/workflows/CI/badge.svg)](https://github.com/igorvieira/murasaki_rs/actions/workflows/ci.yml)
@@ -30,118 +30,121 @@ This will:
 
 ## Usage
 
-### When You Have Git Conflicts
-
 ```bash
 saki
 ```
 
-### When There Are No Conflicts
+The tool automatically detects the current git state:
+- **Conflict Mode**: When there are merge/rebase conflicts to resolve
+- **Staging Mode**: When there are no conflicts (stage, unstage, commit files)
 
-If you run `saki` without any active merge/rebase conflicts, it will show an interactive status view with:
+## Interface
 
-**Layout:**
-- **Left Panel (25%)**: Menu with options
-  - View Changes
-  - Quit
-- **Right Panel (75%)**: Dynamic content based on menu selection
-  - Default: ANSI art banner (murasaki in purple, centered)
-  - View Changes: File list organized by status (Staged, Both, Unstaged) with inline operations
+### Layout
+- **Left Panel (30%)**: File list with status indicators
+- **Right Panel (70%)**: Code view (conflicts) or diff view (staging)
+
+### File List Sections (Staging Mode)
+- **STAGED** (green): Files ready to commit
+- **BOTH** (yellow): Files with staged and unstaged changes
+- **UNSTAGED** (red): Working directory modifications
 
 ## Commands
 
-### Status View (No Conflicts)
+### Navigation (Both Modes)
+| Key | Action |
+|-----|--------|
+| `j/k` or `Up/Down` | Navigate files (file list) / Scroll (code view) |
+| `Tab` | Switch focus between file list and code view |
+| `Ctrl+d/Ctrl+u` | Scroll half page down/up |
+| `?` | Show help modal |
+| `q` | Quit |
 
-**When on Menu (Banner):**
-- `j/k` or `↑/↓` - Navigate menu
-- `Enter` - Select menu option
-- `q` - Quit
+### Staging Mode
+| Key | Action |
+|-----|--------|
+| `a` | Stage selected file |
+| `s` | Unstage selected file |
+| `r` | Restore file (discard changes) |
+| `c` | Open commit modal |
 
-**When in View Changes:**
-- `j/k` or `↑/↓` - Navigate files
-- `a` - Stage selected file (git add)
-- `s` - Unstage selected file (git restore --staged)
-- `r` - Restore selected file to last committed state (git restore)
-- `Esc` - Return to menu
-- `q` - Quit
+### Commit Modal
+| Key | Action |
+|-----|--------|
+| `Enter` | Submit commit |
+| `Esc` | Cancel and close modal |
 
-**File Status Display:**
-- Files are shown with two-character status: `[XY]`
-  - First character (X): Staged status (index)
-  - Second character (Y): Unstaged status (working directory)
-  - Examples: `[M ]` = staged modification, `[ M]` = unstaged modification, `[MM]` = both
+### Conflict Resolution Mode
+| Key | Action |
+|-----|--------|
+| `n/p` | Next/previous conflict |
+| `c` | Accept Current (HEAD) |
+| `i` | Accept Incoming |
+| `b` | Accept Both |
+| `u` | Undo resolution |
 
-### File List
-- `j/k` or `↑/↓` - Navigate
-- `Tab` - Switch to code view
-- `q` - Quit
+### After Resolving All Conflicts (Rebase)
+| Key | Action |
+|-----|--------|
+| `c` | Continue rebase |
+| `a` | Abort rebase |
+| `s` | Skip commit |
 
-### Code View
-- `j/k` or `↑/↓` - Scroll line by line
-- `Ctrl+d/Ctrl+u` - Scroll half page (fast)
-- `n/p` - Next/previous conflict
-- `c` - Accept Current (HEAD) for current conflict
-- `i` - Accept Incoming for current conflict
-- `b` - Accept Both for current conflict
-- `u` - Undo resolution of current conflict
-- `s` - Save file (after resolving all conflicts)
-- `Tab` - Go back to file list
-- `q` - Quit
+## Workflow
 
-### After Resolving (Rebase)
-- `c` - Continue rebase
-- `a` - Abort rebase
-- `s` - Skip commit
+### Conflict Resolution
+1. Run `saki` in a repository with conflicts
+2. Navigate files with `j/k`
+3. Press `Tab` to enter code view
+4. Navigate conflicts with `n/p`
+5. Resolve each conflict: `c` (current), `i` (incoming), or `b` (both)
+6. File is auto-saved when all conflicts are resolved
+7. For rebase: choose continue/abort/skip
 
-## How It Works
-
-1. Detects git conflicts in the repository
-2. Shows list of files with conflicts
-3. Use `Tab` to go to code view
-4. Use `j/k` to scroll and see the entire file
-5. Use `n/p` to navigate between conflicts
-6. For each conflict, choose: `c` (Current), `i` (Incoming), or `b` (Both)
-7. When all conflicts are resolved, press `s` to save
-8. Go to the next file or, if it's a rebase, choose continue/abort/skip
+### Staging Workflow
+1. Run `saki` in a repository without conflicts
+2. Navigate files with `j/k`
+3. Stage files with `a`, unstage with `s`
+4. Press `c` to open commit modal
+5. Type commit message and press `Enter`
 
 ## Features
 
+### Unified Interface
+- Single split-pane layout for both modes
+- Context-aware keyboard shortcuts
+- Seamless transition between conflict and staging modes
+
 ### Conflict Resolution
-- Split-pane interface with file list and code view
 - Syntax highlighting for conflict regions
 - Visual indicators for resolved/unresolved conflicts
 - Color-coded conflict backgrounds:
   - Current (HEAD): Blue background
   - Incoming: Red background
   - Both: Purple background
+- Auto-save after resolving all conflicts in a file
 
-### Status View (New!)
-- Split layout: 25% left menu, 75% right content panel
-- ANSI art banner (murasaki in purple, centered, borderless)
-- Always-visible menu on the left
-- Dynamic right panel that changes based on menu selection
-- Interactive git status display with **staged vs unstaged** separation
-- Files organized into three sections:
-  - **Staged Changes** (green): Ready to commit
-  - **Staged + Unstaged Changes** (yellow): Partially staged files
-  - **Unstaged Changes** (red): Working directory modifications
-- Two-character status display (e.g., `[M ]`, `[ M]`, `[MM]`)
-- Restore files functionality (both staged and unstaged)
-- Clean, VS Code/Cursor-like interface
+### Staging Mode
+- Full git staging workflow
+- Diff view with syntax highlighting
+- Commit modal with error handling
+- Files organized by status (staged/unstaged/both)
 
 ### Safety Features
 - Atomic file writes to prevent data corruption
-- Terminal cleanup on panic for safety
+- Terminal cleanup on panic
 - Input validation to prevent path traversal
+- Version update checking on startup
 
 ## Structure
 
 ```
 src/
-├── domain/     # Data models
-├── app/        # Application state
-├── git/        # Git integration
-└── tui/        # User interface
+├── domain/     # Data models (ConflictedFile, Resolution, GitOperation)
+├── app/        # Application state (AppState, AppMode, ViewMode)
+├── git/        # Git integration (status, staging, commits)
+├── tui/        # User interface (split_pane, event handling)
+└── version/    # Version checking
 ```
 
 ## Development
@@ -150,7 +153,7 @@ src/
 # Build
 cargo build --release
 
-# Tests
+# Tests (69 tests)
 cargo test
 
 # Lint

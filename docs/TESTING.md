@@ -18,10 +18,11 @@ Current test coverage statistics:
 cargo test
 ```
 
-**Test Count:** 21 tests
-- Domain layer: 16 tests
-- Git layer: 5 tests
-- Application layer: 0 tests (planned)
+**Test Count:** 69 tests
+- Domain layer: 22 tests
+- Git layer: 17 tests
+- Application layer: 25 tests
+- Version layer: 4 tests
 - TUI layer: 0 tests (planned)
 
 ### Coverage by Module
@@ -30,18 +31,23 @@ cargo test
 |--------|-------|----------|
 | `domain::resolution` | 3 tests | Good |
 | `domain::conflict` | 13 tests | Good |
+| `domain::git_operation` | 7 tests | Good |
 | `git::parser` | 3 tests | Partial |
 | `git::applier` | 1 test | Partial |
 | `git::detector` | 1 test | Partial |
-| `app::state` | 0 tests | None |
+| `git::status` | 12 tests | Good |
+| `app::state` | 25 tests | Good |
+| `version::semver` | 2 tests | Partial |
+| `version::checker` | 2 tests | Partial |
 | `tui::*` | 0 tests | None |
 
 ### Target Coverage
 
-- **Phase 1 (Current):** Domain layer - 100%
-- **Phase 2:** Git layer - 80%
-- **Phase 3:** Application layer - 70%
+- **Phase 1 (Complete):** Domain layer - 100%
+- **Phase 2 (Complete):** Application layer - Good coverage
+- **Phase 3 (In Progress):** Git layer - 80%
 - **Phase 4:** Integration tests - Key workflows
+- **Phase 5:** TUI layer - Snapshot tests
 
 ## Running Tests
 
@@ -352,13 +358,15 @@ fn test_with_fixture() {
 
 ## Test Coverage Goals
 
-### Short Term (Current Sprint)
+### Short Term (Complete)
 - [x] Domain layer: 100% coverage
+- [x] Application state: Full coverage (25 tests)
+- [x] Git status: Good coverage (12 tests)
+- [x] GitOperation: Good coverage (7 tests)
+
+### Medium Term (Current Sprint)
 - [ ] Git parser: Additional edge case tests
 - [ ] Git applier: Error handling tests
-
-### Medium Term (Next Sprint)
-- [ ] Application state: Full coverage
 - [ ] Event handler: Key navigation tests
 - [ ] Integration tests: End-to-end workflows
 
@@ -415,4 +423,4 @@ All PRs must:
 
 ---
 
-Last updated: January 25, 2026
+Last updated: March 3, 2026
